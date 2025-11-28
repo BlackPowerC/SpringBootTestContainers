@@ -1,0 +1,31 @@
+name: "Test"
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: "2. Test"
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: "Setup Java JDK"
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'semeru'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: "Test Java"
+        run: mvn clean compile test -fn
+
+      - name: "Publish Test Report"
+        if: success() || failure()
+        uses: scacap/action-surefire-report@v1
